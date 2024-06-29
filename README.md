@@ -1,8 +1,8 @@
 
 # Neural Network
 
-Building a neural network from scratch. For now in python but I planned to do it in C and maybe Rust.
-Also will use this to train a digit recognition ML AI.
+Building a neural network from scratch. For now in python but I plan on doing it in C and maybe Rust.
+Also will use this to do digit recognition using Machine Learning.
 
 ### Sources
 
