@@ -1,37 +1,30 @@
-from keras.src.datasets import mnist
-from matplotlib import pyplot as plt
+from loss.categorical_cross_entropy import CategoricalCrossEntropy
+from activation.softmax import SoftMax
+from activation.relu import ReLU
+from layers.dense import Dense
+from nnfs.datasets import spiral_data
 import numpy as np
+import nnfs
 
+nnfs.init()
 
-def sigmoid_activation(x: float):
-	return 1 / ( 1 + np.exp(-x))
+X, y = spiral_data(samples=100, classes=3)
 
-def make_prediction(input_vector, weights, bias):
-	layer_1 = np.dot(input_vector, weights) + bias
-	layer_2 = sigmoid_activation(layer_1)
-	return layer_2
+dense1 = Dense(2, 3)
+activation1 = ReLU()
 
-def mse_loss(target, pred):
-	return np.square(target - pred)
+dense2 = Dense(3, 3)
+activation2 = SoftMax()
 
-def deriv_loss(target, pred):
-	return 2 * (pred - target)
+loss_function = CategoricalCrossEntropy()
 
-learning_rate = 0.03
+dense1.forward(X)
+activation1.forward(dense1.output)
 
-inputs = [np.array([1.66, 1.56]), np.array([2, 1.5])]
-weights = [np.array([1.45, -0.66])]
-expected_results = [np.array([1.0]), np.array([0.0])]
-bias = np.array([0.0])
+dense2.forward(activation1.output)
+activation2.forward(dense2.output)
 
+loss = loss_function.calculate(activation2.output, y)
 
-if __name__ == "__main__":
-	for iter in range(50):
-		cur_input = inputs[1] if iter % 2 == 0 else inputs[0]
-		cur_expected = expected_results[1] if iter % 2 == 0 else expected_results[0]
-
-		prediction = make_prediction(cur_input, weights[0], bias)
-		deriv = deriv_loss(cur_expected, prediction)
-		weights[0] = weights[0] - learning_rate * deriv
-		error = mse_loss(cur_expected, prediction)
-		print(f"Prediction for input {1 if iter % 2 == 0 else 2}, expected {int(cur_expected[0])}: {prediction}; Error: {error}")
+print(activation2.output[:5])
+print(f"Loss: {loss}")

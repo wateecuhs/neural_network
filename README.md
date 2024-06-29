@@ -6,5 +6,7 @@ Also will use this to train a digit recognition ML AI.
 
 ### Sources
 
-- [RealPython](https://realpython.com/python-ai-neural-network/) (not very good imo, but still useful)
+- [Sentdex](https://www.youtube.com/watch?v=Wo5dMEP_BbI&list=PLQVvvaa0QuDcjD5BAw2DxE6OF2tius3V3)
+- [RealPython](https://realpython.com/python-ai-neural-network/)
+- [TowardsDataScience](https://towardsdatascience.com/\math-neural-network-from-scratch-in-python-d6da9f29ce65)
 - GPT4o
