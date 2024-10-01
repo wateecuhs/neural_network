@@ -15,11 +15,11 @@ activation1 = ReLU()
 dense2 = Dense(64, 3)
 loss_activation = Activation_Softmax_Loss_CategoricalCrossentropy()
 
-optimizer = SGD(learning_rate=0.1)
+optimizer = SGD(learning_rate=1, decay=0.001, momentum=.5)
 losses = []
 acc = []
 
-for epoch in range(10001):
+for epoch in range(50001):
 	dense1.forward(X)
 	activation1.forward(dense1.output)
 	dense2.forward(activation1.output)
@@ -31,18 +31,21 @@ for epoch in range(10001):
 		y = np.argmax(y, axis=1)
 
 	accuracy = np.mean(predictions==y)
-	if epoch % 100 == 0:
-		print(f"epoch {epoch}: acc: {accuracy:.3f}, loss: {loss:.3f}")
 
 	loss_activation.backward(loss_activation.output, y)
 	dense2.backward(loss_activation.dinputs)
 	activation1.backward(dense2.dinputs)
 	dense1.backward(activation1.dinputs)
 
+	optimizer.pre_handling()
+	if epoch % 100 == 0:
+		print(f"epoch {epoch}: acc: {accuracy:.3f}, loss: {loss:.3f}, lr: {optimizer.current_learning_rate:.3f}")
 	optimizer.update_params(dense1)
 	optimizer.update_params(dense2)
+	optimizer.post_handling()
 	acc.append(accuracy)
 	losses.append(loss)
+
 figure, axis = plt.subplots(2, 1)
 axis[0].plot(acc)
 axis[0].set_title("Accuracy")
