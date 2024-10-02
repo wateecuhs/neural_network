@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <assert.h>
+#include "loss.h"
 #include <stdio.h>
 
 void seed_rand(void);
@@ -17,15 +19,23 @@ int	main(void)
 		exit(EXIT_FAILURE);
 
 	init_network(nn);
-	if (add_layers(nn, 3, 4, RELU) < 0)
-	{
-		free_network(nn);
-		exit(EXIT_FAILURE);
-	}
+	if (add_layer(nn, 4, RELU) < 0)
+		printf("1\n");
+	if (add_layer(nn, 8, RELU) < 0)
+		printf("2\n");
+	if (add_layer(nn, 8, RELU) < 0)
+		printf("3\n");
+	if (add_layer(nn, 4, SOFTMAX) < 0)
+		printf("4\n");
+	// if (add_layers(nn, 3, 4, RELU) < 0)
+	// {
+	// 	free_network(nn);
+	// 	exit(EXIT_FAILURE);
+	// }
 
 	double *inputs = malloc(4 * sizeof(double));
 	for (int i = 0; i < 4; i++)
-		inputs[i] = i * (rand() % 50) / 10;
+		inputs[i] = (double)(rand() % 5000) / 1000;
 
 	if (nn_forward(nn, inputs, 4) < 0)
 	{
@@ -34,6 +44,9 @@ int	main(void)
 		free_network(nn);
 		exit(EXIT_FAILURE);
 	}
+	double expected[4] = {0, 0, 0, 1};
+
+	printf("loss : %f\n", cce_loss(nn->layers[nn->nb_layers - 1].outputs, nn->layers[nn->nb_layers - 1].nb_neurons, expected));
 	for (int i = 0; i < nn->layers[nn->nb_layers - 1].nb_neurons; i++)
 	{
 		printf("%f", nn->layers[nn->nb_layers - 1].outputs[i]);

@@ -1,12 +1,46 @@
 #include "activation.h"
 #include <math.h>
+#include <assert.h>
+#include <stdio.h>
 
-double relu(double x)
+double *relu(double *inputs, size_t nb_inputs)
 {
-	return (x > 0 ? x : 0);
+	if (!inputs || nb_inputs <= 0)
+		return (NULL);
+	for (size_t i = 0; i < nb_inputs; i++)
+		inputs[i] = inputs[i] > 0 ? inputs[i] : 0;
+	return inputs;
 }
 
-double sigmoid(double x)
+double *sigmoid(double *inputs, size_t nb_inputs)
 {
-	return (1 / (1 + exp(-x)));
+	if (!inputs || nb_inputs <= 0)
+		return (NULL);
+	for (size_t i = 0; i < nb_inputs; i++)
+		inputs[i] = (1 / (1 + exp(-inputs[i])));
+	return (inputs);
+}
+
+double *softmax(double *inputs, size_t nb_inputs)
+{
+	if (!inputs || nb_inputs <= 0)
+		return (NULL);
+
+	double max = inputs[0];
+	printf("softmax :");
+	for (size_t i = 0; i < nb_inputs; i++)
+	{
+		printf("%f ", inputs[i]);
+		if (inputs[i] > max)
+			max = inputs[i];
+	}
+	printf("\n");
+	double sum = 0;
+	for (size_t i = 0; i < nb_inputs; i++)
+		sum += exp(inputs[i] - max);
+	
+	for (size_t i = 0; i < nb_inputs; i++)
+		inputs[i] = exp(inputs[i] - max - log(sum));
+
+	return (inputs);
 }

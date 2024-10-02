@@ -13,10 +13,12 @@ int add_layer(Network *nn, int nb_neurons, Activation activation)
 {
 	int ret_val;
 
+	printf("Adding layer to nn of capacity %d/%d\n", nn->nb_layers, nn->capacity);
 	if (nn->nb_layers >= nn->capacity)
 	{
+		printf("Here\n");
 		nn->capacity = nn->nb_layers + 1;
-		nn = realloc(nn, nn->capacity * sizeof(Layer));
+		nn->layers = realloc(nn->layers, nn->capacity * sizeof(Layer));
 		if (!nn)
 			return (-1);
 	}
@@ -56,10 +58,22 @@ int nn_forward(Network *nn, double *inputs, int nb_inputs)
 		if (layer_forward(&nn->layers[i], nn->layers[i - 1].outputs, nn->layers[i - 1].nb_neurons) < 0)
 			return (-1);
 	}
+	
 	return (0);
 }
 
-void	free_network(Network *nn)
+int nn_backward(Network *nn)
+{
+	if (!nn)
+		return (-1);
+
+	for (size_t i = nn->nb_layers; i > 0; i--)
+	{
+	}
+	return (0);
+}
+
+void free_network(Network *nn)
 {
 	if (!nn)
 		return;

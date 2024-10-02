@@ -20,13 +20,16 @@ int create_layer(Layer *layer, int nb_neurons_in, int nb_neurons_out, Activation
 		case RELU:
 			layer->activation = relu;
 			break;
+		case SOFTMAX:
+			layer->activation = softmax;
+			break;
 		default:
 			layer->activation = NULL;
 			break;
 	}
 	for (int i = 0; i < layer->nb_neurons; i++)
 	{
-		if (init_neuron(&layer->neurons[i], nb_neurons_in, layer->activation) == -1)
+		if (init_neuron(&layer->neurons[i], nb_neurons_in) == -1)
 			return (-1);
 	}
 	return (0);
@@ -34,7 +37,7 @@ int create_layer(Layer *layer, int nb_neurons_in, int nb_neurons_out, Activation
 
 int layer_forward(Layer *layer, double *inputs, int nb_inputs)
 {
-	if (!layer || !inputs || layer->nb_neurons != nb_inputs)
+	if (!layer || !inputs)
 		return (-1);
 
 	for (int i = 0; i < layer->nb_neurons; i++)
@@ -42,8 +45,16 @@ int layer_forward(Layer *layer, double *inputs, int nb_inputs)
 		if (neuron_forward(&layer->neurons[i], inputs, nb_inputs) < 0)
 			return (-1);
 		layer->outputs[i] = layer->neurons[i].output;
-		printf("Neuron %d output -> %f\n", i, layer->outputs[i]);
 	}
+	layer->activation(layer->outputs, layer->nb_neurons);
+	return (0);
+}
+
+int layer_backward(Layer *layer, double *inputs, int nb_inputs)
+{
+	(void)layer;
+	(void)inputs;
+	(void)nb_inputs;
 	return (0);
 }
 

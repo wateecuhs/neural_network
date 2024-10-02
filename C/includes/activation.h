@@ -1,7 +1,11 @@
 #ifndef ACTIVATION_H
 # define ACTIVATION_H
 
-double relu(double x);
-double sigmoid(double x);
+#include <stdlib.h>
+
+double *relu(double *inputs, size_t nb_inputs);
+double *sigmoid(double *inputs, size_t nb_inputs);
+double *softmax(double *inputs, size_t nb_inputs);
+
 
 #endif

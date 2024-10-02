@@ -1,11 +1,13 @@
 #ifndef LAYER_H
 # define LAYER_H
 
+#include <stddef.h>
 #include "neuron.h"
 typedef enum e_activation {
 	NONE,
 	SIGMOID,
 	RELU,
+	SOFTMAX
 } Activation;
 
 typedef struct s_layer {
@@ -13,7 +15,7 @@ typedef struct s_layer {
 	int		capacity;
 	Neuron	*neurons;
 	double	*outputs;
-	double	(*activation)(double x);
+	double	*(*activation)(double *inputs, size_t nb_inputs);
 } Layer;
 
 int		create_layer(Layer *layer, int nb_neurons_in, int nb_neurons_out, Activation activation);
