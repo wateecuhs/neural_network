@@ -46,7 +46,7 @@ int	main(void)
 	}
 	double expected[4] = {0, 0, 0, 1};
 
-	printf("loss : %f\n", cce_loss(nn->layers[nn->nb_layers - 1].outputs, nn->layers[nn->nb_layers - 1].nb_neurons, expected));
+	printf("loss : %f\n", loss_cce(nn->layers[nn->nb_layers - 1].outputs, nn->layers[nn->nb_layers - 1].nb_neurons, expected));
 	for (int i = 0; i < nn->layers[nn->nb_layers - 1].nb_neurons; i++)
 	{
 		printf("%f", nn->layers[nn->nb_layers - 1].outputs[i]);

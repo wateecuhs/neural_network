@@ -27,8 +27,7 @@ int create_layer(Layer *layer, int nb_neurons_in, int nb_neurons_out, Activation
 			layer->activation = NULL;
 			break;
 	}
-	for (int i = 0; i < layer->nb_neurons; i++)
-	{
+	for (int i = 0; i < layer->nb_neurons; i++) {
 		if (init_neuron(&layer->neurons[i], nb_neurons_in) == -1)
 			return (-1);
 	}
@@ -52,6 +51,7 @@ int layer_forward(Layer *layer, double *inputs, int nb_inputs)
 
 int layer_backward(Layer *layer, double *inputs, int nb_inputs)
 {
+	
 	(void)layer;
 	(void)inputs;
 	(void)nb_inputs;

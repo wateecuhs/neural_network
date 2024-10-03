@@ -27,14 +27,14 @@ double *softmax(double *inputs, size_t nb_inputs)
 		return (NULL);
 
 	double max = inputs[0];
-	printf("softmax :");
+
 	for (size_t i = 0; i < nb_inputs; i++)
 	{
 		printf("%f ", inputs[i]);
 		if (inputs[i] > max)
 			max = inputs[i];
 	}
-	printf("\n");
+
 	double sum = 0;
 	for (size_t i = 0; i < nb_inputs; i++)
 		sum += exp(inputs[i] - max);
@@ -43,4 +43,9 @@ double *softmax(double *inputs, size_t nb_inputs)
 		inputs[i] = exp(inputs[i] - max - log(sum));
 
 	return (inputs);
+}
+
+double *d_softmax()
+{
+	
 }
