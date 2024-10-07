@@ -3,6 +3,7 @@
 
 typedef struct s_neuron {
 	double	*weights;
+	double	*gradient;
 	double	*input;
 	double	input_len;
 	double	bias;

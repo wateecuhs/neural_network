@@ -58,7 +58,6 @@ int nn_forward(Network *nn, double *inputs, int nb_inputs)
 		if (layer_forward(&nn->layers[i], nn->layers[i - 1].outputs, nn->layers[i - 1].nb_neurons) < 0)
 			return (-1);
 	}
-	
 	return (0);
 }
 

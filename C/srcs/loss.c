@@ -40,5 +40,6 @@ double loss_softmax_cce(double *pred, int pred_len, double *expected)
 double *d_loss_softmax_cce(double *dvalues, int dvalues_len, int true_class)
 {
 	dvalues[true_class] -= 1;
+	(void)dvalues_len;
 	return dvalues;
 }

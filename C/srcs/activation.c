@@ -7,8 +7,10 @@ double *relu(double *inputs, size_t nb_inputs)
 {
 	if (!inputs || nb_inputs <= 0)
 		return (NULL);
-	for (size_t i = 0; i < nb_inputs; i++)
+	for (size_t i = 0; i < nb_inputs; i++) {
+		printf("%f ", inputs[i]);
 		inputs[i] = inputs[i] > 0 ? inputs[i] : 0;
+	}
 	return inputs;
 }
 
@@ -47,5 +49,5 @@ double *softmax(double *inputs, size_t nb_inputs)
 
 double *d_softmax()
 {
-	
+	return NULL;
 }
