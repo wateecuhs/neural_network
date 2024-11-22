@@ -40,8 +40,10 @@ int create_layer(Layer *layer, int nb_neurons_in, int nb_neurons_out, Activation
     }
 
     for (int i = 0; i < layer->nb_neurons; i++) {
-        for (int j = 0; j < layer->inputs_len; j++)
-            layer->weights[i] = ((double)rand() / RAND_MAX) * 2 - 1;
+        for (int j = 0; j < layer->inputs_len; j++) {
+            layer->weights[i * layer->inputs_len + j] = ((double)rand() / RAND_MAX) * 2 - 1;
+            // printf("weight %d %d: %f\n", i, j, layer->weights[i * layer->inputs_len + j]);
+        }
         layer->biases[i] = .1;
     }
     return (0);
@@ -60,7 +62,11 @@ int layer_forward(Layer *layer, double *inputs, int nb_inputs)
             layer->outputs[i] += layer->inputs[j] * layer->weights[i * nb_inputs + j];
         }
     }
+    for (int i = 0; i < layer->nb_neurons; i++)
+        printf("pre activation %d: %f\n", i, layer->outputs[i]);
     layer->activation(layer->outputs, layer->nb_neurons);
+    for (int i = 0; i < layer->nb_neurons; i++)
+        printf("post activation %d: %f\n", i, layer->outputs[i]);
     return (0);
 }
 

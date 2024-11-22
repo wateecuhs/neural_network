@@ -15,7 +15,6 @@ double loss_cce(double *pred, int pred_len, double *expected)
             pred[i] = 1-1e-7;
         if (expected[i] != 0)
             loss += -log(pred[i] * expected[i]);
-        // printf("singular loss for %d of value %f, expecting %f: %f\n", i, pred[i], expected[i], -log(pred[i] * expected[i]));
     }
     return (loss);
 }
