@@ -20,6 +20,7 @@ void unpack_imgs(Dataset *dataset)
 {
     unsigned char raw_headers[16];
     __uint32_t headers[4];
+    uint8_t *tmp = NULL;
 
     int fd = open("./archive/train-images.idx3-ubyte", O_RDONLY);
     if (fd < 0 || read(fd, raw_headers, 16) < 0)
@@ -31,13 +32,17 @@ void unpack_imgs(Dataset *dataset)
     }
     if (headers[0] != 2051)
         free_exit(*dataset);
+
     dataset->inputs_len = headers[1];
-    if (!(dataset->inputs = malloc(headers[1] * headers[2] * headers[3])) ||
+    if (!(tmp = malloc(headers[1] * headers[2] * headers[3])) ||
+        !(dataset->inputs = malloc((headers[1] * headers[2] * headers[3]) * sizeof(double))) ||
         !(dataset->targets = malloc(headers[1] * sizeof(uint8_t))))
         free_exit(*dataset);
 
-    if (read(fd, dataset->inputs, headers[1] * headers[2] * headers[3]) < 0)
+    if (read(fd, tmp, headers[1] * headers[2] * headers[3]) < 0)
         free_exit(*dataset);
+    for (size_t i = 0; i < headers[1] * headers[2] * headers[3]; i++)
+        dataset->inputs[i] = tmp[i] / 255.0;
     close(fd);
 }
 

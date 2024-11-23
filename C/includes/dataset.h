@@ -8,7 +8,7 @@
 #include <string.h>
 
 typedef struct s_dataset {
-    uint8_t  *inputs;
+    double  *inputs;
     uint8_t *targets;
     int     nb_samples;
     int     inputs_len;
