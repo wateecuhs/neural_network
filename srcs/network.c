@@ -71,6 +71,27 @@ int nn_forward(Network *nn, double *inputs, int nb_inputs)
     return (0);
 }
 
+int nn_predict(Network *nn, double *inputs, int nb_inputs)
+{
+    if (!nn || !inputs || nn->nb_layers < 1 || nb_inputs != nn->layers[0].nb_neurons)
+        return (-1);
+
+    if (layer_forward(&nn->layers[0], inputs, nb_inputs) < 0)
+        return (-1);
+    for (int i = 1; i < nn->nb_layers; i++)
+    {
+        if (layer_forward(&nn->layers[i], nn->layers[i - 1].outputs, nn->layers[i - 1].nb_neurons) < 0)
+            return (-1);
+    }
+    int pred = 0;
+    for (int i = 0; i < nn->layers[nn->nb_layers - 1].nb_neurons; i++)
+    {
+        if (nn->layers[nn->nb_layers - 1].outputs[i] > nn->layers[nn->nb_layers - 1].outputs[pred])
+            pred = i;
+    }
+    return (pred);
+}
+
 int nn_backward(Network *nn, double *loss)
 {
     if (!nn)
@@ -96,3 +117,26 @@ void destroy_network(Network *nn)
     free(nn);
 }
 
+
+void print_network_output(Network *nn)
+{
+    if (!nn || nn->nb_layers < 1)
+        return;
+    printf("Prediction: ");
+    int pred = 0;
+    for (int i = 0; i < nn->layers[nn->nb_layers - 1].nb_neurons; i++)
+    {
+        if (nn->layers[nn->nb_layers - 1].outputs[i] > nn->layers[nn->nb_layers - 1].outputs[pred])
+            pred = i;
+    }
+    printf("%d\n", pred);
+    
+    for (int i = 0; i < nn->layers[nn->nb_layers - 1].nb_neurons; i++)
+    {
+        printf("%f", nn->layers[nn->nb_layers - 1].outputs[i]);
+        if (i + 1 < nn->layers[nn->nb_layers - 1].nb_neurons)
+            printf(" ");
+        else
+            printf("\n");
+    }
+}

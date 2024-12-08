@@ -8,10 +8,14 @@
 #include <string.h>
 
 typedef struct s_dataset {
-    double  *inputs;
-    uint8_t *targets;
-    int     nb_samples;
-    int     inputs_len;
+    double  *training_inputs;
+    uint8_t *training_targets;
+    int     len_training;
+
+    double  *test_inputs;
+    uint8_t *test_targets;
+    int     len_test;
+
 } Dataset;
 
 Dataset unpack_mnist(void);

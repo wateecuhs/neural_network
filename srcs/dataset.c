@@ -3,11 +3,14 @@
 
 void free_dataset(Dataset dataset)
 {
-    if (dataset.inputs)
-        free(dataset.inputs);
-    if (dataset.targets)
-        free(dataset.targets);
-    
+    if (dataset.training_inputs)
+        free(dataset.training_inputs);
+    if (dataset.training_targets)
+        free(dataset.training_targets);
+    if (dataset.test_inputs)
+        free(dataset.test_inputs);
+    if (dataset.test_targets)
+        free(dataset.test_targets);
 }
 
 void free_exit(Dataset dataset)
@@ -16,13 +19,14 @@ void free_exit(Dataset dataset)
     exit(EXIT_FAILURE);
 }
 
-void unpack_imgs(Dataset *dataset)
+double *unpack_imgs(Dataset *dataset, char *path, int *inputs_len)
 {
     unsigned char raw_headers[16];
     __uint32_t headers[4];
-    uint8_t *tmp = NULL;
+    double *ret = NULL;
+    uint8_t *raw_values = NULL;
 
-    int fd = open("./archive/train-images.idx3-ubyte", O_RDONLY);
+    int fd = open(path, O_RDONLY);
     if (fd < 0 || read(fd, raw_headers, 16) < 0)
         free_exit(*dataset);
 
@@ -33,25 +37,26 @@ void unpack_imgs(Dataset *dataset)
     if (headers[0] != 2051)
         free_exit(*dataset);
 
-    dataset->inputs_len = headers[1];
-    if (!(tmp = malloc(headers[1] * headers[2] * headers[3])) ||
-        !(dataset->inputs = malloc((headers[1] * headers[2] * headers[3]) * sizeof(double))) ||
-        !(dataset->targets = malloc(headers[1] * sizeof(uint8_t))))
+    *inputs_len = headers[1];
+    if (!(raw_values = malloc(headers[1] * headers[2] * headers[3])) ||
+        !(ret = malloc((headers[1] * headers[2] * headers[3]) * sizeof(double))))
         free_exit(*dataset);
 
-    if (read(fd, tmp, headers[1] * headers[2] * headers[3]) < 0)
+    if (read(fd, raw_values, headers[1] * headers[2] * headers[3]) < 0)
         free_exit(*dataset);
     for (size_t i = 0; i < headers[1] * headers[2] * headers[3]; i++)
-        dataset->inputs[i] = tmp[i] / 255.0;
+        ret[i] = raw_values[i] / 255.0;
     close(fd);
+    return ret;
 }
 
-void unpack_labels(Dataset *dataset)
+uint8_t *unpack_labels(Dataset *dataset, char *path)
 {
     unsigned char raw_headers[8];
     __uint32_t headers[2];
+    uint8_t *tmp = NULL;
 
-    int fd = open("./archive/train-labels.idx1-ubyte", O_RDONLY);
+    int fd = open(path, O_RDONLY);
     if (fd < 0 || read(fd, raw_headers, 8) < 0)
         free_exit(*dataset);
 
@@ -60,16 +65,23 @@ void unpack_labels(Dataset *dataset)
         headers[i] = __builtin_bswap32(headers[i]);
     }
 
-    if (read(fd, dataset->targets, headers[1]) < 0)
+    tmp = malloc(headers[1]);
+    if (!tmp)
+        free_exit(*dataset);
+
+    if (read(fd, tmp, headers[1]) < 0)
         free_exit(*dataset);
     close(fd);
+    return tmp;
 }
 
 Dataset unpack_mnist(void)
 {
     Dataset dataset = {0};
 
-    unpack_imgs(&dataset);
-    unpack_labels(&dataset);
+    dataset.training_inputs = unpack_imgs(&dataset, "./archive/train-images.idx3-ubyte", &dataset.len_training);
+    dataset.training_targets = unpack_labels(&dataset, "./archive/train-labels.idx1-ubyte");
+    dataset.test_inputs = unpack_imgs(&dataset, "./archive/t10k-images.idx3-ubyte", &dataset.len_test);
+    dataset.test_targets = unpack_labels(&dataset, "./archive/t10k-labels.idx1-ubyte");
     return dataset;
 }

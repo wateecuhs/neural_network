@@ -19,7 +19,7 @@ Building a neural network library from scratch in C to learn how they work
 
 ## Todo
 
-- Model saving/loading
+- ONNX Model saving/loading
 - Implement batches for SGD
 - Graphical interface for single digit OCR with input frame and NN representation
 
