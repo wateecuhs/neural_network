@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int create_layer(Layer *layer, int nb_neurons_in, int nb_neurons_out, Activation activation, int batch_size)
+int create_layer(Layer *layer, int nb_neurons_in, int nb_neurons_out, Activation activation)
 {
     layer->outputs = calloc(nb_neurons_out, sizeof(double));
     layer->weights = calloc(nb_neurons_out * nb_neurons_in, sizeof(double));
@@ -19,7 +19,6 @@ int create_layer(Layer *layer, int nb_neurons_in, int nb_neurons_out, Activation
     layer->nb_neurons = nb_neurons_out;
     layer->inputs_len = nb_neurons_in;
     layer->capacity = nb_neurons_out;
-    layer->batch_size = batch_size;
 
     layer->activation_type = activation;
     switch (activation)

@@ -1,8 +1,8 @@
 #include "network.h"
 #include "activation.h"
 #include "loss.h"
+#include <stdio.h>
 #include "dataset.h"
-#include <SDL.h>
 
 void seed_rand(void);
 
@@ -14,7 +14,7 @@ int	main(void)
     Dataset dataset = unpack_mnist();
     double *d_loss = NULL;
 
-    init_network(nn);
+    nn = init_network(4);
     add_layer(nn, 784, RELU);
     add_layer(nn, 64, RELU);
     add_layer(nn, 32, RELU);

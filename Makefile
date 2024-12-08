@@ -20,7 +20,6 @@ RM					=	rm -rf
 
 DIR_INCS =\
 	includes/ \
-	$(SDL_PATH)/include/SDL2 \
 
 INCLUDES =\
 	$(addprefix -I , $(DIR_INCS))
