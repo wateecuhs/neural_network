@@ -2,24 +2,35 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void	init_network(Network *nn)
+Network *init_network(int capacity)
 {
+    
+    Network *nn = malloc(sizeof(Network));
+    if (!nn)
+        return (NULL);
+
+    nn->capacity = capacity;
+    if (capacity < 1)
+        capacity = 4;
+
     nn->nb_layers = 0;
-    nn->capacity = 4;
     nn->layers = malloc(sizeof(Layer) * nn->capacity);
+    if (!nn->layers)
+    {
+        free(nn);
+        return (NULL);
+    }
+    return (nn);
 }
 
 int add_layer(Network *nn, int nb_neurons, Activation activation)
 {
     int ret_val;
 
-    // printf("Adding layer to nn of capacity %d/%d\n", nn->nb_layers, nn->capacity);
     if (nn->nb_layers >= nn->capacity)
     {
         nn->capacity = nn->nb_layers + 1;
         nn->layers = realloc(nn->layers, nn->capacity * sizeof(Layer));
-        if (!nn)
-            return (-1);
     }
     if (nn->nb_layers == 0) 
         ret_val = create_layer(&nn->layers[nn->nb_layers], nb_neurons, nb_neurons, activation);
@@ -72,7 +83,7 @@ int nn_backward(Network *nn, double *loss)
     return (0);
 }
 
-void free_network(Network *nn)
+void destroy_network(Network *nn)
 {
     if (!nn)
         return;

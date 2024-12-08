@@ -22,10 +22,6 @@ int	main(void)
     Dataset dataset = unpack_mnist();
     double *d_loss = NULL;
 
-    nn = malloc(sizeof(Network));
-    if (!nn)
-        exit(EXIT_FAILURE);
-
     init_network(nn);
     add_layer(nn, 784, RELU);
     add_layer(nn, 64, RELU);
@@ -37,22 +33,22 @@ int	main(void)
 
     for (int i = 0; i < 60000; i++)
     {
-        printf("Epoch %d\n", i);
+        // printf("Epoch %d\n", i);
         memcpy(inputs, &dataset.inputs[i * 784], 784 * sizeof(double));
         nn_forward(nn, inputs, 784);
         bzero(expected, 10 * sizeof(double));
         expected[dataset.targets[i]] = 1;
         d_loss = d_loss_softmax_cce(nn->layers[nn->nb_layers - 1].outputs, nn->layers[nn->nb_layers - 1].nb_neurons, dataset.targets[i]);
-        print_network_output(nn);
-        nn_backward(nn, d_loss);
-        printf("Target: %d\n", dataset.targets[i]);
-        printf("Loss: %f\n\n", loss_cce(nn->layers[nn->nb_layers - 1].outputs, nn->layers[nn->nb_layers - 1].nb_neurons, expected));
+        // print_network_output(nn);
+        // nn_backward(nn, d_loss);
+        // printf("Target: %d\n", dataset.targets[i]);
+        // printf("Loss: %f\n\n", loss_cce(nn->layers[nn->nb_layers - 1].outputs, nn->layers[nn->nb_layers - 1].nb_neurons, expected));
         free(d_loss);
         for (int i = 0; i < nn->nb_layers; i++)
             update_parameters(&nn->layers[i], 0.001);
     }
     free(inputs);
-    free_network(nn);
+    destroy_network(nn);
     return (0);
 }
 

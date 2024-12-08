@@ -3,6 +3,10 @@
 
 #include <stddef.h>
 
+typedef enum e_type {
+    DENSE,
+} LayerType;
+
 typedef enum e_activation {
     NONE,
     SIGMOID,
@@ -11,6 +15,7 @@ typedef enum e_activation {
 } Activation;
 
 typedef struct s_layer {
+    // LayerType   type;
     double      *inputs;
     double      *outputs;
     double      *weights;
@@ -21,6 +26,7 @@ typedef struct s_layer {
     int         nb_neurons;
     int         inputs_len;
     int         capacity;
+    int         batch_size;
     Activation  activation_type;
     double      *(*activation)(double *inputs, size_t nb_inputs);
     double      *(*d_activation)(double *inputs, size_t nb_inputs);

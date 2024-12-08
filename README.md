@@ -3,6 +3,11 @@
 
 Building a neural network library from scratch in C to learn how they work
 
+## Current tasks
+
+- Cleaning up the code so its more flexible and library-like.
+- Batches
+
 ## Current progress
 
 - Single digit OCR works, which was the original goal of this project

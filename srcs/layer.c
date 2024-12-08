@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int create_layer(Layer *layer, int nb_neurons_in, int nb_neurons_out, Activation activation)
+int create_layer(Layer *layer, int nb_neurons_in, int nb_neurons_out, Activation activation, int batch_size)
 {
     layer->outputs = calloc(nb_neurons_out, sizeof(double));
     layer->weights = calloc(nb_neurons_out * nb_neurons_in, sizeof(double));
@@ -19,6 +19,7 @@ int create_layer(Layer *layer, int nb_neurons_in, int nb_neurons_out, Activation
     layer->nb_neurons = nb_neurons_out;
     layer->inputs_len = nb_neurons_in;
     layer->capacity = nb_neurons_out;
+    layer->batch_size = batch_size;
 
     layer->activation_type = activation;
     switch (activation)
@@ -39,13 +40,11 @@ int create_layer(Layer *layer, int nb_neurons_in, int nb_neurons_out, Activation
             free_layer(layer);
             return (-1);
     }
-
-    // printf("weights:\n");
+    // Xavier initialization
     double limit = sqrt(2.0 / (nb_neurons_in + nb_neurons_out));
     for (int i = 0; i < layer->nb_neurons; i++) {
         for (int j = 0; j < layer->inputs_len; j++) {
             layer->weights[i * layer->inputs_len + j] = ((double)rand() / RAND_MAX) * 2 * limit - limit;
-            // printf("Neuron %d Weight %d: %f \n",i, j, layer->weights[i * layer->inputs_len + j]);
         }
         layer->biases[i] = .1;
     }
@@ -65,24 +64,7 @@ int layer_forward(Layer *layer, double *inputs, int nb_inputs)
         for (int j = 0; j < nb_inputs; j++)
             layer->outputs[i] += layer->inputs[j] * layer->weights[i * nb_inputs + j];
     }
-    // double average = 0;
-    // for (int i = 0; i < layer->nb_neurons; i++)
-    //     average += layer->outputs[i];
-    // average /= layer->nb_neurons;
-    // printf("Average before activation: %f\n", average);
     layer->activation(layer->outputs, layer->nb_neurons);
-    // average = 0;
-    // for (int i = 0; i < layer->nb_neurons; i++)
-    //     average += layer->outputs[i];
-    // average /= layer->nb_neurons;
-    // printf("Average after activation: %f\n", average);
-    // if (layer->activation_type == SOFTMAX)
-    // {
-    //     printf("Softmax:\n");
-    //     for (int i = 0; i < layer->nb_neurons; i++)
-    //         printf("%f ", layer->outputs[i]);
-    //     printf("\n");
-    // }
     return (0);
 }
 
