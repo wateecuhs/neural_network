@@ -5,8 +5,9 @@ Building a neural network library from scratch in C to learn how they work
 
 ## Current tasks
 
-- Cleaning up the code so its more flexible and library-like.
+- Cleaning up the code so its more flexible and library-like. (Dataset structure, train function)
 - Batches
+- Optimization (l1 cache and whatnot idk what this means)
 
 ## Current progress
 
@@ -26,3 +27,4 @@ Building a neural network library from scratch in C to learn how they work
 ## Ressources
 
 - [Sentdex](https://www.youtube.com/watch?v=Wo5dMEP_BbI&list=PLQVvvaa0QuDcjD5BAw2DxE6OF2tius3V3)
+- [Optimizing Matrix Multiplication](https://coffeebeforearch.github.io/2020/06/23/mmul.html)

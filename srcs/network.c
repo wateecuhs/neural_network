@@ -1,14 +1,18 @@
 #include "network.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include "loss.h"
 
-Network *init_network(int capacity)
+Network *init_network(int capacity, int batch_size)
 {
     
     Network *nn = malloc(sizeof(Network));
     if (!nn)
         return (NULL);
 
+    if (batch_size < 1)
+        batch_size = 1;
+    nn->batch_size = batch_size;
     nn->capacity = capacity;
     if (capacity < 1)
         capacity = 4;
@@ -59,12 +63,10 @@ int nn_forward(Network *nn, double *inputs, int nb_inputs)
     if (!nn || !inputs || nn->nb_layers < 1 || nb_inputs != nn->layers[0].nb_neurons)
         return (-1);
 
-    // printf("Layer 0\n");
     if (layer_forward(&nn->layers[0], inputs, nb_inputs) < 0)
         return (-1);
     for (int i = 1; i < nn->nb_layers; i++)
     {
-        // printf("Layer %d\n", i);
         if (layer_forward(&nn->layers[i], nn->layers[i - 1].outputs, nn->layers[i - 1].nb_neurons) < 0)
             return (-1);
     }
@@ -98,9 +100,7 @@ int nn_backward(Network *nn, double *loss)
         return (-1);
     layer_backward(&nn->layers[nn->nb_layers - 1], loss);
     for (int i = nn->nb_layers - 2; i >= 0; --i)
-    {
         layer_backward(&nn->layers[i], nn->layers[i + 1].d_inputs);
-    }
     return (0);
 }
 
@@ -117,6 +117,35 @@ void destroy_network(Network *nn)
     free(nn);
 }
 
+void train_network(Network *nn, Dataset dataset, int epochs, double learning_rate)
+{
+    if (!nn || nn->nb_layers < 1)
+        return;
+    double *d_loss = NULL;
+    double *inputs = malloc(nn->layers[0].inputs_len * sizeof(double));
+    double expected[nn->layers[nn->nb_layers - 1].nb_neurons];
+    printf("Batch size: %d\n", nn->batch_size);
+    for (int i = 0; i < epochs; i++)
+    {
+        for (int j = 0; j < dataset.len_training / nn->batch_size; j++)
+        {
+            for (int k = 0; k < nn->batch_size; k++) {
+                memcpy(inputs, &dataset.training_inputs[(j * nn->batch_size + k) * nn->layers[0].inputs_len], nn->layers[0].inputs_len * sizeof(double));
+                nn_forward(nn, inputs, nn->layers[0].inputs_len);
+                bzero(expected, nn->layers[nn->nb_layers - 1].nb_neurons * sizeof(double));
+                expected[dataset.training_targets[j * nn->batch_size + k]] = 1;
+                d_loss = d_loss_softmax_cce(nn->layers[nn->nb_layers - 1].outputs, nn->layers[nn->nb_layers - 1].nb_neurons, dataset.training_targets[j * nn->batch_size + k]);
+                nn_backward(nn, d_loss);
+                free(d_loss);
+            }
+            for (int k = 0; k < nn->nb_layers; k++)
+                update_parameters(&nn->layers[k], learning_rate, nn->batch_size);
+        }
+        printf("Epoch %d\n", i);
+    }
+    printf("Training done\n");
+    free(inputs);
+}
 
 void print_network_output(Network *nn)
 {

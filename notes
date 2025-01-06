@@ -1,0 +1,12 @@
+im gna write my thought process here
+
+implementing batches
+
+either i do a rolling average or i store every gradient then do the average when the current batch is over, apply it and remove the gradients
+
+first option works fine, no issue but it doesnt work with bacthes of 2 which produce very bad accuracy (0.098 which is basically worth than randomly guessing)
+might be me idk but trying  the 2nd option
+
+Saving memory by just doing a sum of gradients and dividing in the end
+
+training with batches of size one has awful accuracy too which it didnt have before i implemented batches so i did smth wrong yea

@@ -15,7 +15,7 @@ typedef enum e_activation {
 } Activation;
 
 typedef struct s_layer {
-    // LayerType   type;
+    // LayerType   type; this will be use when i hav different types of layers yk
     double      *inputs;
     double      *outputs;
     double      *weights;
@@ -35,6 +35,6 @@ int     create_layer(Layer *layer, int nb_neurons_in, int nb_neurons_out, Activa
 int     layer_forward(Layer *layer, double *inputs, int nb_inputs);
 int     layer_backward(Layer *layer, double *d_outputs);
 void    free_layer(Layer *layer);
-void    update_parameters(Layer *layer, double learning_rate);
+void    update_parameters(Layer *layer, double learning_rate, int batch_size);
 
 #endif

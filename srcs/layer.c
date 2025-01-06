@@ -83,7 +83,7 @@ int layer_backward(Layer *layer, double *d_outputs)
     for (int i = 0; i < layer->nb_neurons; i++) {
         double d_output = d_outputs[i] * activation_derivatives[i];
         for (int j = 0; j < layer->inputs_len; j++)
-            layer->d_weights[i * layer->inputs_len + j] = d_output * layer->inputs[j];
+            layer->d_weights[i * layer->inputs_len + j] += d_output * layer->inputs[j];
         layer->d_biases[i] += d_output;
     }
     for (int i = 0; i < layer->inputs_len; i++) {
@@ -96,18 +96,17 @@ int layer_backward(Layer *layer, double *d_outputs)
     return (0);
 }
 
-void update_parameters(Layer *layer, double learning_rate)
+void update_parameters(Layer *layer, double learning_rate, int batch_size)
 {
     for (int i = 0; i < layer->nb_neurons; i++) {
         for (int j = 0; j < layer->inputs_len; j++) {
-            layer->weights[i * layer->inputs_len + j] -= learning_rate * layer->d_weights[i * layer->inputs_len + j];
+            layer->weights[i * layer->inputs_len + j] -= learning_rate * (layer->d_weights[i * layer->inputs_len + j] / batch_size);
             layer->d_weights[i * layer->inputs_len + j] = 0;
         }
-        layer->biases[i] -= learning_rate * layer->d_biases[i];
+        layer->biases[i] -= learning_rate * (layer->d_biases[i] / batch_size);
         layer->d_biases[i] = 0;
     }
 }
-
 
 void free_layer(Layer *layer)
 {
