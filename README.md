@@ -6,7 +6,6 @@ Building a neural network library from scratch in C to learn how they work
 ## Current tasks
 
 - Cleaning up the code so its more flexible and library-like. (Dataset structure, train function)
-- Batches
 - Optimization (l1 cache and whatnot idk what this means)
 
 ## Current progress
@@ -17,6 +16,7 @@ Building a neural network library from scratch in C to learn how they work
 - Activations: ReLU, Sigmoid, Softmax
 - Loss: Categorical Cross-Entropy
 - Optimizers: Stochastic Gradient Descent (single sample at a time)
+- Batches
 
 ## Todo
 

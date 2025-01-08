@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "loss.h"
 
-Network *init_network(int capacity, int batch_size)
+Network *init_network(int capacity, int batch_size, double learning_rate)
 {
     
     Network *nn = malloc(sizeof(Network));
@@ -14,6 +14,7 @@ Network *init_network(int capacity, int batch_size)
         batch_size = 1;
     nn->batch_size = batch_size;
     nn->capacity = capacity;
+    nn->learning_rate = learning_rate;
     if (capacity < 1)
         capacity = 4;
 
@@ -117,14 +118,13 @@ void destroy_network(Network *nn)
     free(nn);
 }
 
-void train_network(Network *nn, Dataset dataset, int epochs, double learning_rate)
+void train_network(Network *nn, Dataset dataset, int epochs)
 {
     if (!nn || nn->nb_layers < 1)
         return;
     double *d_loss = NULL;
     double *inputs = malloc(nn->layers[0].inputs_len * sizeof(double));
     double expected[nn->layers[nn->nb_layers - 1].nb_neurons];
-    printf("Batch size: %d\n", nn->batch_size);
     for (int i = 0; i < epochs; i++)
     {
         for (int j = 0; j < dataset.len_training / nn->batch_size; j++)
@@ -139,11 +139,9 @@ void train_network(Network *nn, Dataset dataset, int epochs, double learning_rat
                 free(d_loss);
             }
             for (int k = 0; k < nn->nb_layers; k++)
-                update_parameters(&nn->layers[k], learning_rate, nn->batch_size);
+                update_parameters(&nn->layers[k], nn->learning_rate, nn->batch_size);
         }
-        printf("Epoch %d\n", i);
     }
-    printf("Training done\n");
     free(inputs);
 }
 

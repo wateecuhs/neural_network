@@ -10,3 +10,11 @@ might be me idk but trying  the 2nd option
 Saving memory by just doing a sum of gradients and dividing in the end
 
 training with batches of size one has awful accuracy too which it didnt have before i implemented batches so i did smth wrong yea
+
+doesnt work for batches of 1 or 2 which is kinda fucked up cuz batches of 1 should work just fine considering it worked before i implemented batches
+
+
+nvm im an idiot it was working i was just using the same learning rate for batches of 64 and for batches of 1 so it was way too high and over correcting so not doing much at all
+works fine with 0.01 as learning rate
+
+im supposed to do some matrices optimizations but im struggling to visualize it

@@ -15,7 +15,7 @@ typedef enum e_activation {
 } Activation;
 
 typedef struct s_layer {
-    // LayerType   type; this will be use when i hav different types of layers yk
+    // LayerType   type; this will be used when i hav different types of layers yk
     double      *inputs;
     double      *outputs;
     double      *weights;

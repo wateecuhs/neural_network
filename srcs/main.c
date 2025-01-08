@@ -13,14 +13,14 @@ int	main(void)
     Network	*nn;
     Dataset dataset = unpack_mnist();
 
-    nn = init_network(4, 3);
+    nn = init_network(4, 64, 0.2);
     add_layer(nn, 784, RELU);
     add_layer(nn, 64, RELU);
     add_layer(nn, 32, RELU);
     add_layer(nn, 10, SOFTMAX);
     double *inputs = malloc(784 * sizeof(double));
 
-    train_network(nn, dataset, 1, 0.1);
+    train_network(nn, dataset, 10);
     int pred;
     int correct = 0;
     for (int i = 0; i < dataset.len_test; i++)
