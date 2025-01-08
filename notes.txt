@@ -1,0 +1,44 @@
+im gna write my thought process here
+
+implementing batches
+
+either i do a rolling average or i store every gradient then do the average when the current batch is over, apply it and remove the gradients
+
+first option works fine, no issue but it doesnt work with bacthes of 2 which produce very bad accuracy (0.098 which is basically worth than randomly guessing)
+might be me idk but trying  the 2nd option
+
+Saving memory by just doing a sum of gradients and dividing in the end
+
+training with batches of size one has awful accuracy too which it didnt have before i implemented batches so i did smth wrong yea
+
+doesnt work for batches of 1 or 2 which is kinda fucked up cuz batches of 1 should work just fine considering it worked before i implemented batches
+
+
+nvm im an idiot it was working i was just using the same learning rate for batches of 64 and for batches of 1 so it was way too high and over correcting so not doing much at all
+works fine with 0.01 as learning rate
+
+probably could modify learning rate based on batches size so user doesnt have to change the learning rate every time he changes batches size ?
+but that means under the hood changes to a value given by the user which i dont like
+
+im supposed to do some matrices optimizations but im struggling to visualize it
+
+plan is optimizing matmuls then use simd
+
+gna try multiple optimizations and benchmark them and then ill see ig
+
+current benchmark approx.
+
+Settings:
+Batch size: 64
+Learning rate: 0.2
+Epochs: 1
+
+Time to load dataset: 155.131ms
+Time to init Neural Network: 8.21ms
+Time to train Neural Network: 64000.652ms
+Time to predict: 2743.058000ms
+Accuracy: 0.924400
+Total correct: 9244
+
+Same settings but we are only doing the forward pass:
+16500ms
