@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "loss.h"
 
-Network *init_network(int capacity, int batch_size, double learning_rate)
+Network *init_network(size_t capacity, size_t batch_size, double learning_rate)
 {
     
     Network *nn = malloc(sizeof(Network));
@@ -16,7 +16,7 @@ Network *init_network(int capacity, int batch_size, double learning_rate)
     nn->capacity = capacity;
     nn->learning_rate = learning_rate;
     if (capacity < 1)
-        capacity = 4;
+        capacity = 4;   
 
     nn->nb_layers = 0;
     nn->layers = malloc(sizeof(Layer) * nn->capacity);
@@ -28,7 +28,7 @@ Network *init_network(int capacity, int batch_size, double learning_rate)
     return (nn);
 }
 
-int add_layer(Network *nn, int nb_neurons, Activation activation)
+int add_layer(Network *nn, size_t nb_neurons, Activation activation)
 {
     int ret_val;
 
@@ -47,10 +47,10 @@ int add_layer(Network *nn, int nb_neurons, Activation activation)
     return 0;
 }
 
-int add_layers(Network *nn, int nb_layers_to_add, int nb_neurons, Activation activation)
+int add_layers(Network *nn, size_t nb_layers_to_add, size_t nb_neurons, Activation activation)
 {
     int ret_val;
-    for (int i = 0; i < nb_layers_to_add; i++)
+    for (size_t i = 0; i < nb_layers_to_add; i++)
     {
         ret_val = add_layer(nn, nb_neurons, activation);
         if (ret_val < 0)
@@ -59,14 +59,14 @@ int add_layers(Network *nn, int nb_layers_to_add, int nb_neurons, Activation act
     return (0);
 }
 
-int nn_forward(Network *nn, double *inputs, int nb_inputs)
+int nn_forward(Network *nn, double *inputs, size_t nb_inputs)
 {
     if (!nn || !inputs || nn->nb_layers < 1 || nb_inputs != nn->layers[0].nb_neurons)
         return (-1);
 
     if (layer_forward(&nn->layers[0], inputs, nb_inputs) < 0)
         return (-1);
-    for (int i = 1; i < nn->nb_layers; i++)
+    for (size_t i = 1; i < nn->nb_layers; i++)
     {
         if (layer_forward(&nn->layers[i], nn->layers[i - 1].outputs, nn->layers[i - 1].nb_neurons) < 0)
             return (-1);
@@ -74,20 +74,20 @@ int nn_forward(Network *nn, double *inputs, int nb_inputs)
     return (0);
 }
 
-int nn_predict(Network *nn, double *inputs, int nb_inputs)
+int nn_predict(Network *nn, double *inputs, size_t nb_inputs)
 {
     if (!nn || !inputs || nn->nb_layers < 1 || nb_inputs != nn->layers[0].nb_neurons)
         return (-1);
 
     if (layer_forward(&nn->layers[0], inputs, nb_inputs) < 0)
         return (-1);
-    for (int i = 1; i < nn->nb_layers; i++)
+    for (size_t i = 1; i < nn->nb_layers; i++)
     {
         if (layer_forward(&nn->layers[i], nn->layers[i - 1].outputs, nn->layers[i - 1].nb_neurons) < 0)
             return (-1);
     }
     int pred = 0;
-    for (int i = 0; i < nn->layers[nn->nb_layers - 1].nb_neurons; i++)
+    for (size_t i = 0; i < nn->layers[nn->nb_layers - 1].nb_neurons; i++)
     {
         if (nn->layers[nn->nb_layers - 1].outputs[i] > nn->layers[nn->nb_layers - 1].outputs[pred])
             pred = i;
@@ -111,25 +111,25 @@ void destroy_network(Network *nn)
         return;
     if (nn->layers)
     {
-        for (int i = 0; i < nn->nb_layers; i++)
+        for (size_t i = 0; i < nn->nb_layers; i++)
             free_layer(&nn->layers[i]);
     }
     free(nn->layers);
     free(nn);
 }
 
-void train_network(Network *nn, Dataset dataset, int epochs)
+void train_network(Network *nn, Dataset dataset, size_t epochs)
 {
     if (!nn || nn->nb_layers < 1)
         return;
     double *d_loss = NULL;
     double *inputs = malloc(nn->layers[0].inputs_len * sizeof(double));
     double expected[nn->layers[nn->nb_layers - 1].nb_neurons];
-    for (int i = 0; i < epochs; i++)
+    for (size_t i = 0; i < epochs; i++)
     {
-        for (int j = 0; j < dataset.len_training / nn->batch_size; j++)
+        for (size_t j = 0; j < dataset.len_training / nn->batch_size; j++)
         {
-            for (int k = 0; k < nn->batch_size; k++) {
+            for (size_t k = 0; k < nn->batch_size; k++) {
                 memcpy(inputs, &dataset.training_inputs[(j * nn->batch_size + k) * nn->layers[0].inputs_len], nn->layers[0].inputs_len * sizeof(double));
                 nn_forward(nn, inputs, nn->layers[0].inputs_len);
                 bzero(expected, nn->layers[nn->nb_layers - 1].nb_neurons * sizeof(double));
@@ -138,7 +138,7 @@ void train_network(Network *nn, Dataset dataset, int epochs)
                 nn_backward(nn, d_loss);
                 free(d_loss);
             }
-            for (int k = 0; k < nn->nb_layers; k++)
+            for (size_t k = 0; k < nn->nb_layers; k++)
                 update_parameters(&nn->layers[k], nn->learning_rate, nn->batch_size);
         }
     }
@@ -151,14 +151,14 @@ void print_network_output(Network *nn)
         return;
     printf("Prediction: ");
     int pred = 0;
-    for (int i = 0; i < nn->layers[nn->nb_layers - 1].nb_neurons; i++)
+    for (size_t i = 0; i < nn->layers[nn->nb_layers - 1].nb_neurons; i++)
     {
         if (nn->layers[nn->nb_layers - 1].outputs[i] > nn->layers[nn->nb_layers - 1].outputs[pred])
             pred = i;
     }
     printf("%d\n", pred);
     
-    for (int i = 0; i < nn->layers[nn->nb_layers - 1].nb_neurons; i++)
+    for (size_t i = 0; i < nn->layers[nn->nb_layers - 1].nb_neurons; i++)
     {
         printf("%f", nn->layers[nn->nb_layers - 1].outputs[i]);
         if (i + 1 < nn->layers[nn->nb_layers - 1].nb_neurons)

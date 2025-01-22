@@ -9,7 +9,7 @@ OBJS_TEST			=	$(patsubst %.c, $(DIR_BUILD)%.o, $(TEST))
 DEPS				=	$(patsubst %.c, $(DIR_BUILD)%.d, $(SRCS))
 
 DEPS_FLAGS			=	-MMD -MP
-LIB_FLAGS			=	-lm #-L$(SDL_PATH)/lib -lSDL2 -lm -lpthread -ldl -Wl,-rpath,$(SDL_PATH)/lib -D_REENTRANT
+LIB_FLAGS			=	-lm -lpthread #-L$(SDL_PATH)/lib -lSDL2 -lm -ldl -Wl,-rpath,$(SDL_PATH)/lib -D_REENTRANT
 BASE_CFLAGS			=	-O3 -g3 -Wall -Wextra -Werror
 OPTIMIZATION_CFLAGS	=	-O3 -march=native -funroll-loops -flto
 BASE_DEBUG_CFLAGS	=	-g3
